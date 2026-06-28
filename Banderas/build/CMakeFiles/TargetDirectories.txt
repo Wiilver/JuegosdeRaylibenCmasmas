@@ -1,3 +1,0 @@
-C:/Users/USER/Desktop/Programacion/JuegosdeRaylibenCmasmas/Banderas/build/CMakeFiles/Banderas.dir
-C:/Users/USER/Desktop/Programacion/JuegosdeRaylibenCmasmas/Banderas/build/CMakeFiles/edit_cache.dir
-C:/Users/USER/Desktop/Programacion/JuegosdeRaylibenCmasmas/Banderas/build/CMakeFiles/rebuild_cache.dir
