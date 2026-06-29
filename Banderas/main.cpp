@@ -51,39 +51,62 @@ class Jugador : public Entidad{
             if((dir.aba)&&(pos.y<dim.y-rad)) pos.y+=vel;
             if((dir.der)&&(pos.x<dim.x-rad)) pos.x+=vel;
         }
+
+        bool checarColision(Coor &ban, const int RAD){
+            if((pos.x>ban.x-RAD)&&(pos.x<ban.x+RAD)&&(pos.y>ban.y-RAD)&&(pos.y<ban.y+RAD)) return true;
+            return false;
+        }
+
+        void aumentarPuntuacion(){
+            puntuacion++;
+        }
 };
 
 struct Bandera : public Entidad{
-    void iniciarBandera(){
-        pos.x = 0;
-        pos.y = 0;
-        rad = 35;
-        color = RED;
-    }
-
-    void generarPosicion(Coor &dim){
-        pos.x = GetRandomValue(int(dim.x/4), dim.x-rad);
-        pos.y = GetRandomValue(int(dim.y/4), dim.y-rad);
-
-        int rnd = GetRandomValue(0,3);
-
-        switch(rnd){
-            case 0:
-                return;
-            case 1:
-                pos.x*=-1;
-                return;
-            case 2:
-                pos.y*=-1;
-                pos.x*=-1;
-                return;
-            case 3:
-                pos.y*=-1;
-                return;
+    private:
+        void generarComponente(int &comp, int rango){
+            int rnd = GetRandomValue(0,2);
+            switch(rnd){
+                case 0:
+                    comp = GetRandomValue(rad, rango-rad);
+                    rnd = GetRandomValue(0,2);
+                    break;
+                case 1:
+                    comp = GetRandomValue(comp-rad, rango*2-rad);
+                    break;
+                case 2:
+                    comp = GetRandomValue(rango*2-rad, rango*3-rad);
+                    break;
+            }
         }
-    }
+    public:
+        void iniciarBandera(){
+            pos.x = 0;
+            pos.y = 0;
+            rad = 35;
+            color = RED;
+        }
+
+        void generarPosicion(Coor &dim){
+            int rnd, x, y, ant;
+
+            x = dim.x/3;
+            y = dim.y/3;
+
+            generarComponente(pos.x, x);            
+            generarComponente(pos.y, y);            
+        }
 
 };
+
+void dibujarEntidades(Jugador &jug, Bandera &ban, Color fondo){
+    BeginDrawing();
+    ClearBackground(fondo);
+    DrawText(TextFormat("Puntuacion : %i", jug.puntuacion),40, 40, 30, BLACK);
+    jug.dibujar();
+    ban.dibujar();
+    EndDrawing();
+}
 
 int main(){
     Coor dimensiones;
@@ -105,18 +128,17 @@ int main(){
 
     while(!WindowShouldClose()){
         //Manejar
-
         jugador.detectarDirecciones();
 
         //Actualizar
         jugador.cambiarPosicion(dimensiones);
+        if(jugador.checarColision(bandera.pos, bandera.rad)) {
+            bandera.generarPosicion(dimensiones);
+            jugador.aumentarPuntuacion();
+        }
 
         //Dibujar
-        BeginDrawing();
-        ClearBackground(FONDO);
-        jugador.dibujar();
-        bandera.dibujar();
-        EndDrawing();
+        dibujarEntidades(jugador, bandera, FONDO);
     }
 
     CloseWindow();
